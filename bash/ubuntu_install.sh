@@ -11,12 +11,14 @@ sudo apt autoremove -y
 # make - describing relations of files
 # wget - downloading files by HTTP, HTTP, FTP
 # curl - working with URL requests (send, download, etc.)
+# xclip - command line interface for working with clipboard
 # tk-dev - cross-platform graph toolkit for Tcl and X11
 echo "---=== Install common packages ===---"
 sudo apt install -y \
 	make \
 	wget \
 	curl \
+	xclip \
 	tk-dev
 
 
