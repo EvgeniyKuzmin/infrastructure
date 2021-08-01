@@ -1,5 +1,8 @@
 #!/bin/bash
 
+EMAIL="evgeniy.a.kuzmin@gmail.com"
+NAME="EvgeniyKuzmin"
+
 ### Unpdate system's packages
 echo "---=== Updating ===---"
 sudo apt update
@@ -25,9 +28,19 @@ sudo apt install -y \
 ### Install GIT
 echo "---=== Install GIT ===---"
 sudo apt install -y git
-git config --global user.name "Evgenii Kuzmin"
-git config --global user.email evgenii_kuzmin1@epam.com
+git config --global user.name $NAME
+git config --global user.email $EMAIL
 git config --global core.editor subl
+## 1. Generating a new SSH key
+# $ ssh-keygen -t "github_${NAME}" -C $EMAIL
+## 2. Adding the new SSH key to the ssh-agent
+# $ eval "$(ssh-agent -s)"
+# $ ssh-add "~/.ssh/github_${NAME}"
+## 3. Adding a new SSH key to your GitHub account
+# GitHub.com > Settings > SSH and GPG keys > Add SSH key
+# "Title": empty, "Key": content of "~/.ssh/github_${NAME}.pub"
+## 4. Test your SSH connection
+# $ ssh -T git@github.com
 
 
 ### Install Python
