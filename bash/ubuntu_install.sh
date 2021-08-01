@@ -25,6 +25,22 @@ sudo apt install -y \
 	tk-dev
 
 
+### Install software
+echo "---=== Install software via snap ===---"
+sudo snap install sublime-text --classic
+sudo snap install \
+	bitwarden \
+	postman \
+	beekeeper-studio \
+	clementine \
+	vlc \
+	libreoffice \
+	chromium \
+	telegram-desktop \
+	skype \
+	teams
+
+
 ### Install GIT
 echo "---=== Install GIT ===---"
 sudo apt install -y git
