@@ -38,7 +38,8 @@ sudo snap install \
 	chromium \
 	telegram-desktop \
 	skype \
-	teams
+	teams \
+	zoom-client
 
 
 ### Install GIT
@@ -69,7 +70,7 @@ sudo apt install -y \
 	libssl-dev \
 	libffi-dev \
 	unixodbc-dev
-	
+
 
 ### Install PyEnv
 echo "---=== Install PyEnv ===---"
@@ -122,9 +123,9 @@ curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
 	| sudo apt-key add -
 
 sudo add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable"
+	"deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+	$(lsb_release -cs) \
+	stable"
 
 sudo apt update
 
