@@ -219,3 +219,10 @@ sudo ./setup.sh -s=3445 -l=835dc08839b78a925c9f8882b85b3592
 sudo rm -rf opswatclient_deb
 sudo rm opswatclient_deb.tar
 echo "--->>> Installiation of OPSWAT Client is complite"
+
+
+echo "--->>> Install Ansible"
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+echo "--->>> Installiation of Ansible is complite"
