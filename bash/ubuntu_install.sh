@@ -209,3 +209,13 @@ echo "--->>> NPM installed: \"$(npm -v)\""
 echo "--->>> Install Serverless"
 npm install -g serverless
 echo "--->>> Severless installed: \"$(serverless --version)\""
+
+
+echo "--->>> Install OPSWAT Client"
+wget https://s3-us-west-2.amazonaws.com/opswat-gears-cloud-clients/linux_installer/latest/opswatclient_deb.tar
+tar -xvf opswatclient_deb.tar
+cd opswatclient_deb
+sudo ./setup.sh -s=3445 -l=835dc08839b78a925c9f8882b85b3592
+sudo rm -rf opswatclient_deb
+sudo rm opswatclient_deb.tar
+echo "--->>> Installiation of OPSWAT Client is complite"
