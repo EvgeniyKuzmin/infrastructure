@@ -1,8 +1,13 @@
 variable "region" {
   type    = string
-  default = "eu-wes-1"
+  default = "eu-west-1"
 }
 
 variable "ssh_key" {
-  default = "/home/evgenii/.ssh/ec2-52-215-205-101_key"
+  type = string
+}
+
+variable "username" {
+  type    = string
+  default = "ubuntu"
 }
