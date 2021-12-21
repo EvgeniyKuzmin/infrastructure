@@ -17,3 +17,8 @@ variable "bucket_name" {
   type = string
   default = "evgenii-kuzmin-static-website"
 }
+
+variable "website_dir" {
+  type    = string
+  default = "../website_static"
+}

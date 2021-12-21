@@ -72,21 +72,21 @@ resource "aws_s3_bucket" "static_website_1" {
   lifecycle  {ignore_changes = [replication_configuration]}
 }
 resource "aws_s3_bucket_object" "static_website_html" {
-  for_each     = fileset("${path.module}/website/", "*.html")
+  for_each     = fileset("${path.module}/${var.website_dir}/", "*.html")
 
   bucket       = aws_s3_bucket.static_website_1.id
   key          = each.value
-  source       = "${path.module}/website/${each.value}"
-  etag         = filemd5("${path.module}/website/${each.value}")
+  source       = "${var.website_dir}/${each.value}"
+  etag         = filemd5("${path.module}/${var.website_dir}/${each.value}")
   content_type = "text/html"
 }
 resource "aws_s3_bucket_object" "static_website_css" {
-  for_each     = fileset("${path.module}/website/", "*.css")
+  for_each     = fileset("${path.module}/${var.website_dir}/", "*.css")
 
   bucket       = aws_s3_bucket.static_website_1.id
   key          = each.value
-  source       = "${path.module}/website/${each.value}"
-  etag         = filemd5("${path.module}/website/${each.value}")
+  source       = "${var.website_dir}/${each.value}"
+  etag         = filemd5("${path.module}/${var.website_dir}/${each.value}")
   content_type = "text/css"
 }
 
