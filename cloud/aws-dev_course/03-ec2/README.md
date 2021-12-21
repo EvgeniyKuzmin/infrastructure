@@ -32,7 +32,8 @@
     - download the static web site created in module 3 from S3
 3. Ensure that you can access the static web site on the EC2 instance over HTTP.
 4. Create a custom AMI based on the EC2 instance.
-5. Delete the EC2 instance and create another one based on the custom AMI.6. Make sure the web site is still available over HTTP.
+5. Delete the EC2 instance and create another one based on the custom AMI.
+6. Make sure the web site is still available over HTTP.
 
 
 ## Sub-task 3 – introducing EBS basics
