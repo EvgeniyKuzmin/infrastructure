@@ -21,3 +21,8 @@ output "av_zone" {
 output "connect_str" {
   value = "ssh -i ${data.local_file.private_key.filename} ${local.username}@${aws_instance.server.public_ip}"
 }
+
+output "s3_uri" {
+  value = "s3://${aws_s3_bucket.static_website.id}"
+}
+

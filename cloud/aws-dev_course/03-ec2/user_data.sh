@@ -1,7 +1,12 @@
 
 #!/bin/bash
 sudo su
+
+# Install Apache webserver
 yum -y install httpd
-echo "<h1>Kuzmin Evgenii</h1>" >> /var/www/html/index.html
 sudo systemctl enable httpd
 sudo systemctl start httpd
+
+# Upload website
+aws s3 cp ${bucket} /var/www/html --recursive
+}

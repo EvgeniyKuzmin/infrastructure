@@ -15,19 +15,29 @@ provider "aws" {
 }
 
 locals {
-  # Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD
-  ami           = "ami-04dd4500af104442f"
-  instance_type = "t2.micro"
-  username      = "ec2-user"
+  username = "ec2-user"
 }
 
 
+resource "aws_iam_instance_profile" "s3_read_access" {
+  name = "s3_read_access"
+  role = aws_iam_role.s3_read_access.name
+}
+
 resource "aws_instance" "server" {
-  ami                    = local.ami
-  instance_type          = local.instance_type
+  # Amazon Linux 2 AMI (HVM) - Kernel 5.10, SSD
+  ami                    = "ami-04dd4500af104442f"
+
+  instance_type          = "t2.micro"
   key_name               = aws_key_pair.ssh_rsa.key_name
   vpc_security_group_ids = [aws_security_group.main.id]
-  user_data = file("${path.module}/install_httpd.sh")
+  iam_instance_profile   = aws_iam_instance_profile.s3_read_access.name
+  user_data = templatefile(
+    "${path.module}/user_data.sh",
+    {
+      bucket = "s3://${aws_s3_bucket.static_website.id}"
+    }
+  )
 
   connection {
     type        = "ssh"
@@ -37,7 +47,6 @@ resource "aws_instance" "server" {
     timeout     = "4m"
   }
 }
-
 
 resource "aws_security_group" "main" {
   egress = [
@@ -89,6 +98,19 @@ resource "aws_security_group" "main" {
     }
   ]
 }
+
+
+resource "aws_ami_from_instance" "static_website" {
+  name               = "static_website"
+  source_instance_id = aws_instance.server.id
+}
+resource "aws_instance" "server_clone" { 
+  ami                    = aws_ami_from_instance.static_website.id
+  instance_type          = "t2.micro"
+  key_name               = aws_key_pair.ssh_rsa.key_name
+  vpc_security_group_ids = [aws_security_group.main.id]
+}
+
 
 resource "aws_key_pair" "ssh_rsa" {
   key_name   = basename(var.ssh_key)
