@@ -16,6 +16,8 @@ provider "aws" {
 
 locals {
   username = "ec2-user"
+  av_zone = "${var.region}a"
+  device_name = "/dev/xvdf"
 }
 
 
@@ -29,13 +31,17 @@ resource "aws_instance" "server" {
   ami                    = "ami-04dd4500af104442f"
 
   instance_type          = "t2.micro"
+  availability_zone      = local.av_zone
   key_name               = aws_key_pair.ssh_rsa.key_name
   vpc_security_group_ids = [aws_security_group.main.id]
   iam_instance_profile   = aws_iam_instance_profile.s3_read_access.name
   user_data = templatefile(
     "${path.module}/user_data.sh",
     {
-      bucket = "s3://${aws_s3_bucket.static_website.id}"
+      bucket    = "s3://${aws_s3_bucket.static_website.id}"
+      device    = local.device_name
+      user      = local.username
+      mount_dir = "shared_volume"
     }
   )
 
@@ -97,6 +103,17 @@ resource "aws_security_group" "main" {
       self             = false
     }
   ]
+}
+
+resource "aws_ebs_volume" "share" {
+  type                 = "gp2"
+  availability_zone    = local.av_zone
+  size                 = 8
+}
+resource "aws_volume_attachment" "share" {
+  device_name = local.device_name
+  volume_id   = aws_ebs_volume.share.id
+  instance_id = aws_instance.server.id
 }
 
 

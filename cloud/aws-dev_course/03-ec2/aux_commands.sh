@@ -15,5 +15,16 @@ EC2_DIR=/home/ec2-user/site
 ## Step 3. Copy files inside of the instance
 # sudo cp site/* /var/www/html
 
-S3_BUCKET=...
+## Cope files from S3_BUCKET
 # aws s3 cp $S3_BUCKET /var/www/html --recursive
+
+## Mount EBS attached volume
+# device=/dev/xvdf
+# mount_dir=share_volume
+# lsblk
+# file -s $device
+# mkfs -t xfs $device
+# file -s $device
+# mkdir /home/$USER/$mount_dir
+# mount $device /home/$USER/$mount_dir
+
