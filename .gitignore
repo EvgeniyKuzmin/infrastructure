@@ -1,3 +1,13 @@
 .terraform*
 terraform.tfstate
 terraform.tfstate*
+
+# cache
+**/.cache
+__pycache__
+*.pyc
+*.pyo
+
+# virtual environment
+.venv/
+.python-version

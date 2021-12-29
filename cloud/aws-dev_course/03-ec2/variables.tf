@@ -19,10 +19,15 @@ variable "ingr_ssh_ip" {
 
 variable "bucket_name" {
   type = string
-  default = "evgenii-kuzmin-static-website"
+  default = "evgenii-kuzmin-web"
 }
 
-variable "website_dir" {
+variable "web_site_dir" {
   type    = string
-  default = "../website_static"
+  default = "../web_site"
+}
+
+variable "web_app_dir" {
+  type    = string
+  default = "../web_app"
 }

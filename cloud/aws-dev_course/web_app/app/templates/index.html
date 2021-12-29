@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ name }}'s Personal Page</title>
+  <link rel="stylesheet" href="{{ css_style }}">
+</head>
+ 
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <h1>Welcome to my dynamic website</h1>
+    </div>
+
+    <div class="content">
+      <p>Course "CloudX Associate: AWS Developer"</p>
+      <p><a href="{{ github_url }}">Task Solutions</a></p>
+      <p>EC2 Info:</p>
+      <ul>
+      {% for key, value in ec2_info.items() %}
+        <li>{{ key|e }}: {{ value|e }}</li>
+      {% endfor %}
+      </ul>
+    </div>
+
+    <div class="footer">
+      <p>{{ name }} "{{ email }}"</p>
+    </div>
+  </div>
+</body>
+</html>

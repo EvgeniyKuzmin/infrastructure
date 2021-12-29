@@ -11,11 +11,21 @@ data "aws_iam_policy_document" "ec2_assume" {
 data "aws_iam_policy_document" "s3_read_access" {
   statement {
     actions = ["s3:ListBucket"]
-    resources = [aws_s3_bucket.static_website.arn]
+    resources = [
+      aws_s3_bucket.web_site.arn,
+      aws_s3_bucket.web_app.arn,
+    ]
   }
   statement {
     actions = ["s3:GetObject"]
-    resources = ["${aws_s3_bucket.static_website.arn}/*"]
+    resources = [
+      "${aws_s3_bucket.web_site.arn}/*",
+      "${aws_s3_bucket.web_app.arn}/*",
+    ]
+  }
+  statement {
+    actions = ["ec2:*"]
+    resources = ["*"]
   }
 }
 resource "aws_iam_role_policy" "s3_read_access" {

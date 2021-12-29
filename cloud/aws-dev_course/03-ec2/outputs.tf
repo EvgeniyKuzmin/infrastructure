@@ -2,12 +2,16 @@ output "username" {
   value = local.username
 }
 
-output "public_dns" {
+output "public_dns_server" {
   value = aws_instance.server.public_dns
 }
 
-output "public_ip" {
+output "public_ip_server" {
   value = aws_instance.server.public_ip
+}
+
+output "public_dns_server_clone" {
+  value = aws_instance.server_clone.public_dns
 }
 
 output "private_key" {
@@ -23,6 +27,6 @@ output "connect_str" {
 }
 
 output "s3_uri" {
-  value = "s3://${aws_s3_bucket.static_website.id}"
+  value = "s3://${aws_s3_bucket.web_site.id}"
 }
 

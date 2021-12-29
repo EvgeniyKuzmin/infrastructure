@@ -38,10 +38,15 @@ resource "aws_instance" "server" {
   user_data = templatefile(
     "${path.module}/user_data.sh",
     {
-      bucket    = "s3://${aws_s3_bucket.static_website.id}"
-      device    = local.device_name
-      user      = local.username
-      mount_dir = "shared_volume"
+      bucket          = "s3://${aws_s3_bucket.web_app.id}"
+      web_app_archive = basename(data.archive_file.web_app.output_path)
+      python3_version = "8"
+      region          = var.region
+
+      # bucket    = "s3://${aws_s3_bucket.web_site.id}"
+      device          = local.device_name
+      user            = local.username
+      mount_dir       = "shared_volume"
     }
   )
 
@@ -117,12 +122,12 @@ resource "aws_volume_attachment" "share" {
 }
 
 
-resource "aws_ami_from_instance" "static_website" {
-  name               = "static_website"
+resource "aws_ami_from_instance" "web_site" {
+  name               = "web_site"
   source_instance_id = aws_instance.server.id
 }
 resource "aws_instance" "server_clone" { 
-  ami                    = aws_ami_from_instance.static_website.id
+  ami                    = aws_ami_from_instance.web_site.id
   instance_type          = "t2.micro"
   key_name               = aws_key_pair.ssh_rsa.key_name
   vpc_security_group_ids = [aws_security_group.main.id]
