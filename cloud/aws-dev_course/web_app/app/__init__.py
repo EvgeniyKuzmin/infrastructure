@@ -46,6 +46,11 @@ def index():
     )
 
 
+@app.route('/region')
+def show_region():
+    return os.environ.get('AWS_DEFAULT_REGION', 'mars')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
