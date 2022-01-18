@@ -2,6 +2,7 @@ import socket
 from typing import Any, Dict
 
 import boto3
+from botocore.exceptions import ClientError
 from flask import Flask, url_for, request, render_template
 
 
@@ -37,7 +38,11 @@ def get_ec2_instance_info() -> Dict[str, str]:
 
 @app.route('/')
 def index():
-    ec2_info = get_ec2_instance_info()
+    try:
+        ec2_info = get_ec2_instance_info()
+    except Exception as e:
+        ec2_info = {'error': str(e)}
+
     return render_template(
         'index.html',
         css_style=url_for('static', filename='style.css'),
