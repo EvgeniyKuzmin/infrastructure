@@ -15,9 +15,11 @@ provider "aws" {
 }
 
 locals {
-  username = "ec2-user"
-  av_zone = "${var.region}a"
+  username    = "ec2-user"
+  av_zone     = "${var.region}a"
   device_name = "/dev/xvdf"
+  app_port    = 80
+  app_name    = "flask-app"
 }
 
 
@@ -36,17 +38,15 @@ resource "aws_instance" "server" {
   vpc_security_group_ids = [aws_security_group.main.id]
   iam_instance_profile   = aws_iam_instance_profile.s3_read_access.name
   user_data = templatefile(
-    "${path.module}/user_data.sh",
+    "${path.module}/files/user_data.sh",
     {
       bucket          = "s3://${aws_s3_bucket.web_app.id}"
       web_app_archive = basename(data.archive_file.web_app.output_path)
       python3_version = "8"
-      region          = var.region
-
-      # bucket    = "s3://${aws_s3_bucket.web_site.id}"
-      device          = local.device_name
       user            = local.username
-      mount_dir       = "shared_volume"
+      app_name        = local.app_name
+      # device          = local.device_name
+      # mount_dir       = "shared_volume"
     }
   )
 
@@ -90,8 +90,8 @@ resource "aws_security_group" "main" {
       protocol         = "tcp"
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
-      from_port        = 80
-      to_port          = 80
+      from_port        = local.app_port
+      to_port          = local.app_port
       prefix_list_ids  = []
       security_groups  = []
       self             = false

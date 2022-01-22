@@ -63,3 +63,15 @@ resource "aws_s3_bucket_object" "file_upload" {
   source = data.archive_file.web_app.output_path
   etag   = filemd5(data.archive_file.web_app.output_path)
 }
+
+resource "aws_s3_bucket_object" "systemd_unit_file" {
+  bucket  = aws_s3_bucket.web_app.id
+  key     = "${local.app_name}.service"
+  content = templatefile(
+    "${path.module}/files/${local.app_name}.service",
+    {
+      user = local.username
+      port = local.app_port
+    }
+  )
+}

@@ -1,5 +1,4 @@
 KEY=$(HOME)/.ssh/aws_ec2_`date +%Y-%m-%d`
-# KEY=$(HOME)/.ssh/aws_ec2_2021-12-22
 MYIP=$(shell curl https://ifconfig.me)
 
 
