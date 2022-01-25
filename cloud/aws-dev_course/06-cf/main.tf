@@ -16,8 +16,15 @@ provider "aws" {
 
 
 resource "aws_cloudformation_stack" "stack" {
-  name          = "hui-pizda-kartoshka"
+  name          = "${var.project_name}-stack"
   capabilities  = ["CAPABILITY_NAMED_IAM"]
+
+  parameters = {
+    ProjectName = var.project_name
+    VPCCidr     = "10.0.0.0/16"
+    SubnetACidr = "10.0.11.0/24"
+    SubnetBCidr = "10.0.21.0/24"
+  }
 
   template_body = file("${path.module}/template.yaml")
 

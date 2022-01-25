@@ -1,5 +1,109 @@
+Parameters:
+
+  VPCCidr:
+    Type: String
+  SubnetACidr:
+    Type: String
+  SubnetBCidr:
+    Type: String
+  ProjectName:
+    Type: String
+
+
 Resources:
+
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: !Ref VPCCidr
+      Tags:
+      - Key: Name
+        Value: !Join ['', [!Ref ProjectName, "-Network"]]
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DependsOn: VPC
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Join ['', [!Ref ProjectName, "-IGW"]]
+
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  SubnetPublicA:
+    Type: AWS::EC2::Subnet
+    DependsOn: InternetGateway
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref SubnetACidr
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [ 0, !GetAZs ]
+      Tags:
+      - Key: Name
+        Value: !Join ['', [!Ref ProjectName, "-PublicSubnet-A"]]
+
+  SubnetPublicB:
+    Type: AWS::EC2::Subnet
+    DependsOn: InternetGateway
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref SubnetBCidr
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [ 0, !GetAZs ]
+      Tags:
+      - Key: Name
+        Value: !Join ['', [!Ref ProjectName, "-PublicSubnet-B"]]
+
+  ElasticIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: VPC
+      Tags:
+      - Key: Name
+        Value: !Join ['', [!Ref ProjectName, "-NatGateway-A-EIP"]]
+
+  NatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt ElasticIP.AllocationId
+      SubnetId: !Ref SubnetPublicA
+      Tags:
+      - Key: Name
+        Value: !Join ['', [!Ref ProjectName, "-NatGateway-A"]]
+
+  RouteTablePublic:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+      - Key: Name
+        Value: !Join ['', [!Ref ProjectName, "-PublicRouteTable"]]
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref RouteTablePublic
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  SubnetRouteTableAssociationPublicA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPublicA
+      RouteTableId: !Ref RouteTablePublic
+
+  SubnetRouteTableAssociationPublicB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetPublicB
+      RouteTableId: !Ref RouteTablePublic
+
+
+Outputs:
+  NatGatewayIp:
+    Value: !Ref ElasticIP
