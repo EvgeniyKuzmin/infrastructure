@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to serve ${app_name}
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/${user}/app
+Environment="PATH=/home/${user}/app/.venv/bin"
+ExecStart=/home/${user}/app/.venv/bin/gunicorn -b 0.0.0.0:${port} app:app
+
+[Install]
+WantedBy=multi-user.target
