@@ -20,7 +20,7 @@ data "aws_availability_zones" "available" {}
 locals {
   username = "ec2-user"
   app_port = 80
-  app_name = "flask-app"
+  app_name = "flaskApp"
 }
 
 
@@ -35,8 +35,9 @@ resource "aws_instance" "server" {
 
   instance_type          = "t2.micro"
   availability_zone      = data.aws_availability_zones.available.names[0]
+  subnet_id              = aws_subnet.public_a.id
   key_name               = aws_key_pair.ssh_rsa.key_name
-  vpc_security_group_ids = [aws_security_group.main.id]
+  vpc_security_group_ids = [aws_security_group.server.id]
   iam_instance_profile   = aws_iam_instance_profile.s3_read_access.name
   user_data = templatefile(
     "${path.module}/files/user_data.sh",
@@ -58,7 +59,9 @@ resource "aws_instance" "server" {
   }
 }
 
-resource "aws_security_group" "main" {
+resource "aws_security_group" "server" {
+  name   = "${var.project_name}-server"
+  vpc_id = aws_vpc.this.id
   egress = [
     {
       description      = ""

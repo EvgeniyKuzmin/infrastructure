@@ -21,3 +21,13 @@ variable "web_app_dir" {
   type    = string
   default = "../web_app"
 }
+
+variable "project_name" {
+  type    = string
+  default = "task7"
+}
+
+variable "db_password" {
+  type      = string
+  sensitive = true
+}

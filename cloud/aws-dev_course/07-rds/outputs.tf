@@ -26,3 +26,19 @@ output "s3_uri" {
   value = "s3://${aws_s3_bucket.web_app.id}"
 }
 
+output "rds_hostname" {
+  value = aws_db_instance.images.address
+}
+output "rds_port" {
+  value = aws_db_instance.images.port
+}
+output "rds_name" {
+  value = aws_db_instance.images.name
+}
+output "rds_username" {
+  value = aws_db_instance.images.username
+}
+output "db_password" {
+  value     = var.db_password
+  sensitive = true
+}
