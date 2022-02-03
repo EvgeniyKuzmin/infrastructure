@@ -1,0 +1,164 @@
+{
+	"info": {
+		"_postman_id": "8116b42b-efea-4259-88f9-b8d3f40adc74",
+		"name": "flask web_app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Image",
+			"item": [
+				{
+					"name": "Image",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/image/:image_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"image",
+								":image_id"
+							],
+							"variable": [
+								{
+									"key": "image_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Image",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"path\": \"/dir1/file1/txt\",\n    \"desc\": \"test file\",\n    \"meta\": {\n        \"a\": 1,\n        \"b\": true\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URI}}/image/:image_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"image",
+								":image_id"
+							],
+							"variable": [
+								{
+									"key": "image_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Image",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URI}}/image/:image_id",
+							"host": [
+								"{{URI}}"
+							],
+							"path": [
+								"image",
+								":image_id"
+							],
+							"variable": [
+								{
+									"key": "image_id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Images",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URI}}/images",
+					"host": [
+						"{{URI}}"
+					],
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Images",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"path\": \"/dir1/file2/txt\",\n    \"desc\": \"test file2\",\n    \"meta\": {\n        \"a\": 2,\n        \"b\": false\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URI}}/images",
+					"host": [
+						"{{URI}}"
+					],
+					"path": [
+						"images"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URI",
+			"value": "localhost:5000"
+		}
+	]
+}

@@ -1,12 +1,41 @@
-version: "3.3"
+version: "3.8"
 services:
 
   web:
     build: .
     image: amazonlinux:flask-app
     container_name: flask-app
+    environment:
+    - FLASK_ENV=development
     ports:
-      - "80:4000"
+      - "80:5000"
     volumes:
       - ./app:/home/ec2-user/app/app/
-    entrypoint: ["gunicorn", "-b", "0.0.0.0:4000", "app:app"]
+      - ./migrations:/home/ec2-user/app/migrations/
+      - ./uploads:/home/ec2-user/app/uploads/
+      - ./.env.development:/home/ec2-user/app/.env.development
+    # - ~/.aws:/root/.aws
+    # entrypoint: ["gunicorn", "-b", "0.0.0.0:5000", "app:app"]
+    # entrypoint: ["flask", "run", "--host=0.0.0.0", "--port=5000"]
+    entrypoint: >
+      bash -c "
+      flask db upgrade && flask run --host=0.0.0.0 --port=5000
+      "
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14.1-alpine
+    container_name: flaskApp-pg
+    environment:
+    - PGDATA=/var/lib/postgresql/data/pgdata
+    - POSTGRES_DB=flaskApp
+    - POSTGRES_USER=evgenii
+    - POSTGRES_PASSWORD=StR0nGPWD
+    volumes:
+    - pg-data:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+
+volumes:
+  pg-data:

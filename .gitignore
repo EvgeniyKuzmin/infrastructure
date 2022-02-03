@@ -11,3 +11,7 @@ __pycache__
 # virtual environment
 .venv/
 .python-version
+
+
+# custom
+cloud/aws-dev_course/web_app/uploads

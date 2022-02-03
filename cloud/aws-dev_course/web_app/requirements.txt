@@ -1,3 +1,9 @@
-Flask
 boto3
+Flask
+Flask-Migrate
+Flask-SQLAlchemy
 gunicorn
+psycopg2-binary
+py-healthcheck
+python-dotenv
+PyYAML

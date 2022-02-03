@@ -1,0 +1,7 @@
+-r requirements.txt
+
+flake8
+flake8-builtins
+flake8-commas
+flake8-docstrings
+flake8-import-order
