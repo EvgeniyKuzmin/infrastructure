@@ -20,7 +20,7 @@ data "aws_availability_zones" "available" {}
 locals {
   username = "ec2-user"
   app_port = 80
-  app_name = "flaskApp"
+  app_name = "imager"
 }
 
 
@@ -46,7 +46,6 @@ resource "aws_instance" "server" {
       web_app_archive = basename(data.archive_file.web_app.output_path)
       python3_version = "8"
       user            = local.username
-      app_name        = local.app_name
     }
   )
 
@@ -57,6 +56,11 @@ resource "aws_instance" "server" {
     private_key = data.local_file.private_key.content
     timeout     = "4m"
   }
+
+  depends_on = [
+    aws_s3_bucket.web_app,
+    aws_db_instance.images,
+  ]
 }
 
 resource "aws_security_group" "server" {

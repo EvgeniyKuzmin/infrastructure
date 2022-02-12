@@ -4,7 +4,7 @@ resource "aws_db_instance" "images" {
   engine              = "postgres"
   engine_version      = "14.1"
   instance_class      = "db.t3.micro"
-  identifier          = "${var.project_name}-images"
+  identifier          = "${var.project_name}-${local.app_name}"
   name                = local.app_name
   username            = "evgenii"
   password            = var.db_password
@@ -17,7 +17,7 @@ resource "aws_db_instance" "images" {
 
 
 resource "aws_security_group" "db_images" {
-  name   = "${var.project_name}-db-postgres-images"
+  name   = "${var.project_name}-db-postgres-${local.app_name}"
   vpc_id = aws_vpc.this.id
   egress = [
     {
@@ -34,7 +34,7 @@ resource "aws_security_group" "db_images" {
   ]
   ingress = [
     {
-      description      = ""
+      description      = "Used for testing and managing by a developer"
       protocol         = "tcp"
       cidr_blocks      = [var.ingr_ssh_ip]
       ipv6_cidr_blocks = []
@@ -42,6 +42,17 @@ resource "aws_security_group" "db_images" {
       to_port          = 5432
       prefix_list_ids  = []
       security_groups  = []
+      self             = false
+    },
+    {
+      description      = ""
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      from_port        = 5432
+      to_port          = 5432
+      prefix_list_ids  = []
+      security_groups  = [aws_security_group.server.id]
       self             = false
     }
   ]

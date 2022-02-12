@@ -18,7 +18,8 @@ rm -rf /var/cache/yum
 mkdir /home/${user}/app
 cd /home/${user}/app
 aws s3 cp ${bucket}/${web_app_archive} .
-aws s3 cp ${bucket}/${app_name}.service .
+aws s3 cp ${bucket}/app.service .
+aws s3 cp ${bucket}/.env.production .
 unzip ${web_app_archive}
 rm -f ${web_app_archive}
 
@@ -30,8 +31,12 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 
+# Initialize DB
+flask db upgrade
+
+
 # Run the application as a service
-cp ${app_name}.service /etc/systemd/system/
-systemctl start ${app_name}.service
-systemctl enable ${app_name}.service
-systemctl status ${app_name}.service
+cp app.service /etc/systemd/system/
+systemctl start app.service
+systemctl enable app.service
+systemctl status app.service

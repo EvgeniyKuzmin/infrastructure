@@ -31,3 +31,8 @@ variable "db_password" {
   type      = string
   sensitive = true
 }
+
+variable "flask_secret" {
+  type      = string
+  sensitive = true
+}

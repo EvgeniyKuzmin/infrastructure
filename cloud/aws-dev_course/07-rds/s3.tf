@@ -16,8 +16,21 @@ data "archive_file" "web_app" {
   output_path = "${path.module}/.tmp/web_app.zip"
 
   excludes    = [
+    ".env.development",
+    ".env.production",
+    ".python-version",
     ".venv",
-    "app/__pycache__",
+    "Dockerfile",
+    "README.md",
+    # "app",
+    "docker-compose.yml",
+    # "migrations",
+    "postman_collection.json",
+    "requirements-dev.txt",
+    # "requirements.txt",
+    "scripts",
+    "tox.ini",
+    "uploads"
   ]
 }
 
@@ -31,13 +44,30 @@ resource "aws_s3_bucket_object" "file_upload" {
 
 resource "aws_s3_bucket_object" "systemd_unit_file" {
   bucket  = aws_s3_bucket.web_app.id
-  key     = "${local.app_name}.service"
+  key     = "app.service"
   content = templatefile(
-    "${path.module}/files/${local.app_name}.service",
+    "${path.module}/files/app.service",
     {
       user     = local.username
       port     = local.app_port
       app_name = local.app_name
+    }
+  )
+}
+
+
+resource "aws_s3_bucket_object" "credentials_dot_env" {
+  bucket  = aws_s3_bucket.web_app.id
+  key     = ".env.production"
+  content = templatefile(
+    "${path.module}/files/.env.production",
+    {
+      db_host      = aws_db_instance.images.address
+      db_name      = aws_db_instance.images.name
+      db_user      = aws_db_instance.images.username
+      db_password  = var.db_password
+      flask_secret = var.flask_secret
+      aws_region   = var.region
     }
   )
 }
