@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "web_app" {
-  bucket        = "${var.bucket_name}-app"
+  bucket        = "${var.project_name}-${local.app_name}-web-app"
   force_destroy = true
 }
 resource "aws_s3_bucket_ownership_controls" "web_app" {
@@ -70,4 +70,30 @@ resource "aws_s3_bucket_object" "credentials_dot_env" {
       aws_region   = var.region
     }
   )
+}
+
+
+resource "aws_s3_bucket" "image_storage" {
+  bucket        = "${var.project_name}-${local.app_name}-image-storage"
+  force_destroy = true
+}
+resource "aws_s3_bucket_ownership_controls" "image_storage" {
+  bucket = aws_s3_bucket.image_storage.id
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+data "aws_iam_policy_document" "public_read" {
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    actions = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.image_storage.arn}/public/*"]
+  }
+}
+resource "aws_s3_bucket_policy" "public_read" {
+  bucket = aws_s3_bucket.image_storage.id
+  policy = data.aws_iam_policy_document.public_read.json
 }
