@@ -1,19 +1,13 @@
 import os
-import secrets
 from pathlib import Path
-
-from dotenv import load_dotenv
-import yaml
-
-_BASE_DIR = Path(__file__).parents[1]
-load_dotenv(_BASE_DIR / f'{os.getenv("APP_MODE", "prod")}.env')
+import secrets
 
 
 class BaseConfig:
 
-    UPLOAD_FOLDER = _BASE_DIR / './uploads'
+    UPLOAD_FOLDER = Path(__file__).parents[1] / 'uploads'
     MAX_CONTENT_LENGTH = 16_000_000
-    ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+    ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
@@ -30,6 +24,14 @@ class BaseConfig:
     USER_EMAIL = 'evgenii_kuzmin1@epam.com'
     USER_GITHUB_SOLUTION = 'https://github.com/EvgeniyKuzmin/infrastructure/tree/main/cloud/aws-dev_course'
 
+    DB_HOST = os.environ['DB_HOST']
+    DB_NAME = os.environ['DB_NAME']
+    DB_USER = os.environ['DB_USER']
+    DB_PASSWORD = os.environ['DB_PASSWORD']
+
+    S3_BUCKET_NAME = os.environ['BUCKET_NAME']
+    S3_STORAGE_PREFIX = os.environ['BUCKET_PREFIX']
+
     def __init__(self):
         os.makedirs(self.UPLOAD_FOLDER, exist_ok=True)
 
@@ -39,19 +41,9 @@ class DevelopmentConfig(BaseConfig):
     TESTING = True
     ENV = 'development'
 
-    DB_HOST = os.getenv('DB_HOST', 'localhost')
-    DB_NAME = os.getenv('DB_NAME', 'images')
-    DB_USER = os.getenv('DB_USER', 'evgenii')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', 'StR0nGPWD')
-
     SECRET_KEY = secrets.token_hex()
 
 
 class ProductionConfig(BaseConfig):
 
-    DB_HOST = os.getenv('DB_HOST')
-    DB_NAME = os.getenv('DB_NAME')
-    DB_USER = os.getenv('DB_USER')
-    DB_PASSWORD = os.getenv('DB_PASSWORD')
-
-    SECRET_KEY = os.getenv('SECRET_KEY')
+    SECRET_KEY = os.environ['SECRET_KEY']

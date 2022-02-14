@@ -1,8 +1,7 @@
 
 from datetime import datetime
-import os
-from typing import Any, Dict
 from pathlib import Path
+from typing import Any, Dict
 
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
@@ -20,23 +19,36 @@ class Image(db.Model):
     __tablename__ = 'images'
 
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String(255), unique=True)
+    bucket = db.Column(db.String(255))
+    path = db.Column(db.String(255))
+    url = db.Column(db.String(1020))
+    etag = db.Column(db.String(32))
     size = db.Column(db.Integer)
     last_update = db.Column(db.DateTime, default=datetime.utcnow)
 
-    def __init__(self, path: str, size: int):
+    def __init__(self, bucket: str, path: str, url: str, etag: str, size: int):
+        self.bucket = bucket
         self.path = path
+        self.url = url
+        self.etag = etag
         self.size = size
 
     def __repr__(self):
         return f'<Image {self.path}>'
 
     @hybrid_property
-    def extension(self):
+    def extension(self) -> str:
         return Path(self.path).suffix[1:]
+
+    @hybrid_property
+    def name(self) -> str:
+        return Path(self.path).name
 
     def json(self) -> Dict[str, Any]:
         json_data = {}
+        json_data['name'] = self.name
+        json_data['extension'] = self.extension
+        json_data['url'] = self.url
         for column in self.__table__.columns:
             column_value = getattr(self, column.name)
             if isinstance(column_value, (str, int)):

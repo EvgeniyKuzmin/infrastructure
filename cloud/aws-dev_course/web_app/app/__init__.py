@@ -1,15 +1,14 @@
+import logging
 import os
 from pathlib import Path
-import logging
 
 from dotenv import load_dotenv
 from flask import (
-    Flask, flash, redirect, render_template, request, url_for,
-    send_from_directory,
+    flash, Flask, redirect, render_template, request,
+    send_from_directory, url_for,
 )
 from healthcheck import HealthCheck
 from werkzeug.utils import import_string, secure_filename
-
 
 env = os.getenv('FLASK_ENV', 'production')
 load_dotenv(Path(__file__).parents[1] / f'.env.{env}')
@@ -20,7 +19,8 @@ app.config.from_object(
 
 
 from .ec2 import get_ec2_instance_info  # noqa
-from .db import db, Image  # noqa
+from .db import db  # noqa
+from .storage import storage  # noqa
 
 
 def healthcheck_db():
@@ -71,11 +71,10 @@ def upload_file():
             logging.warning('Saving the file by URL: %s', filepath)
             file.save(filepath)
 
-            new_img = Image(path=filename, size=filepath.stat().st_size)
-            db.session.add(new_img)
-            db.session.commit()
-
-            return redirect(url_for('download_file', name=filename))
+            try:
+                return storage.add(name=filepath.name, path=filepath)
+            except (KeyError, ValueError) as e:
+                return {'error': str(e)}
 
     return """
     <!doctype html>
@@ -100,41 +99,48 @@ def get_env(key):
     return os.environ.get(key, 'null')
 
 
-@app.route('/images', methods=('GET', 'POST'))
+# TODO: added POST-method
+@app.route('/images', methods=('GET',))
 def images():
-    if request.method == 'POST':
-        if not request.is_json:
-            return {'error': 'The request payload is not in JSON format'}
-
-        new_img = Image(**request.get_json())
-        db.session.add(new_img)
-        db.session.commit()
-        return {
-            'message': f'car {new_img.path} has been created successfully.',
-        }
-
-    elif request.method == 'GET':
-        results = [img.json() for img in Image.query.all()]
-        return {'count': len(results), 'images': results}
-
-
-@app.route('/image/<image_id>', methods=('GET', 'PUT', 'DELETE'))
-def image(image_id):
-    img = Image.query.get_or_404(image_id)
-
     if request.method == 'GET':
-        return {'message': 'success', 'image': img.json()}
+        images_ = storage.get_all()
+        # breakpoint()
+        return {'images': images_}
+    # elif request.method == 'POST':
+    #     if not request.is_json:
+    #         return {'error': 'The request payload is not in JSON format'}
 
-    elif request.method == 'PUT':
-        if not request.is_json:
-            return {'error': 'The request payload is not in JSON format'}
+    #     new_img = Image(**request.get_json())
+    #     db.session.add(new_img)
+    #     db.session.commit()
+    #     return {
+    #         'message': f'car {new_img.path} has been created successfully.',
+    #     }
 
-        img.update(**request.get_json())
-        db.session.add(img)
-        db.session.commit()
-        return {'message': f'Image {img.path} successfully updated'}
+
+# TODO: added PUT-method
+@app.route('/image/<name>', methods=('GET', 'DELETE'))
+def image(name):
+    # breakpoint()
+    if request.method in ('GET', 'HEAD'):
+        try:
+            return {'image': storage.get(name)}
+        except KeyError as e:
+            return {'error': str(e)}, 404
+
+    # elif request.method == 'PUT':
+    #     if not request.is_json:
+    #         return {'error': 'The request payload is not in JSON format'}
+
+    #     img.update(**request.get_json())
+    #     db.session.add(img)
+    #     db.session.commit()
+    #     return {'message': f'Image {img.path} successfully updated'}
 
     elif request.method == 'DELETE':
-        db.session.delete(img)
-        db.session.commit()
-        return {'message': f'Image {img.path} successfully deleted.'}
+        try:
+            storage.delete(name)
+        except KeyError as e:
+            return {'error': str(e)}
+
+        return {'message': f'Image {name} successfully deleted.'}
