@@ -29,7 +29,8 @@ python3 -m venv .venv
 source /home/${user}/app/.venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
-
+mkdir uploads
+chmod 777 uploads  # TODO: maybe we can delete it
 
 # Initialize DB
 flask db upgrade
