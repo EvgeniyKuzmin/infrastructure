@@ -20,3 +20,11 @@ Optional: add an additional attribute to the message your app will send to the S
 
 - It's unlikely that you'll hit SNS free tier limits, but keep them in mind
 - Think what are the other ways of receiving SNS notifications for the image uploads (not necessarily in a human-readable form)
+
+
+## Implementation notes
+
+	      /--- POST   : domain/uploads     | upload image -> push to SQS
+	{APP} ---- POST   : domain/subscribe   | confirmation email
+	      \--- DELETE : domain/subscribe   | stop sending emails
+	      \--- GET    : domain/drain-queue | extract from SQS -> send to SNS
