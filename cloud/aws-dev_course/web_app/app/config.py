@@ -31,6 +31,7 @@ class BaseConfig:
 
     S3_BUCKET_NAME = os.environ['BUCKET_NAME']
     S3_STORAGE_PREFIX = os.environ['BUCKET_PREFIX']
+    SQS_QUEUE_NAME = os.environ['SQS_NAME']
 
     def __init__(self):
         os.makedirs(self.UPLOAD_FOLDER, exist_ok=True)

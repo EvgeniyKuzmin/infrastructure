@@ -8,6 +8,7 @@ import botocore
 
 from . import app
 from .db import db, Image
+from .queue import queue
 from .utils import build_s3_object_url, calculate_etag
 
 
@@ -50,17 +51,21 @@ class S3FileStorage:
             ContentType=guess_type(path)[0],
         )
 
-        img = Image(
-            bucket=self._bucket_name,
-            path=f'{self._prefix}{name}',
-            url=build_s3_object_url(
+        metadata = {
+            'bucket': self._bucket_name,
+            'path': f'{self._prefix}{name}',
+            'url': build_s3_object_url(
                 self._bucket_name,
                 self._bucket.meta.client.meta.endpoint_url,
                 f'{self._prefix}{name}',
             ),
-            etag=etag,
-            size=path.stat().st_size,
-        )
+            'etag': etag,
+            'size': path.stat().st_size,
+        }
+
+        queue.put({**metadata, 'extension': path.suffix[1:]})
+
+        img = Image(**metadata)
         db.session.add(img)
         db.session.commit()
 
