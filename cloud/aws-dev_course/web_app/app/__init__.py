@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from pathlib import Path
@@ -22,6 +23,7 @@ from .db import db  # noqa
 from .ec2 import get_ec2_instance_info  # noqa
 from .notifier import notifier  # noqa
 from .storage import storage  # noqa
+from .queue import queue  # noqa
 
 
 def healthcheck_db():
@@ -172,3 +174,27 @@ def subscribe():
         }
     else:
         raise Exception(f'AAAaaa wrong method!!! {request.method}')
+
+
+@app.route('/drain-queue')
+def drain_queue():
+    images = []
+    overall_size = 0
+    while True:
+        try:
+            event = queue.pop()
+        except IndexError:
+            break
+        overall_size += event['size']
+        images.append(event['url'])
+
+    message = (
+        f'Sending summary of {len(images)} events, '
+        f'with overall size {overall_size}',
+    )
+    logging.info(message)
+    notifier.publish_message(json.dumps({
+        'overall_size': overall_size,
+        'images': images,
+    }))
+    return {'message': message}
