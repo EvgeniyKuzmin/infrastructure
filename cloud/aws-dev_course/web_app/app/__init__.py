@@ -18,8 +18,9 @@ app.config.from_object(
 )
 
 
-from .ec2 import get_ec2_instance_info  # noqa
 from .db import db  # noqa
+from .ec2 import get_ec2_instance_info  # noqa
+from .notifier import notifier  # noqa
 from .storage import storage  # noqa
 
 
@@ -51,10 +52,15 @@ def index():
     )
 
 
+@app.route('/env/<key>', methods=('GET',))
+def get_env(key):
+    assert request.method == 'GET'
+    return os.environ.get(key, 'null')
+
+
 @app.route('/uploads', methods=('GET', 'POST'))
 def upload_file():
     if request.method == 'POST':
-
         if 'file' not in request.files:
             flash('No file part')
             return redirect(request.url)
@@ -93,12 +99,6 @@ def download_file(name):
     return send_from_directory(app.config['UPLOAD_FOLDER'], name)
 
 
-@app.route('/env/<key>', methods=('GET',))
-def get_env(key):
-    assert request.method == 'GET'
-    return os.environ.get(key, 'null')
-
-
 # TODO: added POST-method
 @app.route('/images', methods=('GET',))
 def images():
@@ -121,7 +121,6 @@ def images():
 # TODO: added PUT-method
 @app.route('/image/<name>', methods=('GET', 'DELETE'))
 def image(name):
-    # breakpoint()
     if request.method in ('GET', 'HEAD'):
         try:
             return {'image': storage.get(name)}
@@ -144,3 +143,32 @@ def image(name):
             return {'error': str(e)}
 
         return {'message': f'Image {name} successfully deleted.'}
+
+
+@app.route('/subscribe', methods=('POST', 'DELETE'))
+def subscribe():
+    if not request.is_json:
+        return {'error': 'The request payload is not in JSON format'}
+
+    field_name = 'address'
+    try:
+        address = request.get_json()[field_name]
+    except KeyError:
+        return {'error': f'The request payload must contain "{field_name}"'}
+
+    if request.method == 'POST':
+        notifier.subscribe_email(address)
+        return {
+            'message': f'Email address {address} was successfully subscribed',
+        }
+    elif request.method == 'DELETE':
+        try:
+            notifier.unsubscribe_email(address)
+        except KeyError as e:
+            return {'error': str(e)}, 404
+
+        return {
+            'message': f'Email address {address} was successfully unsubscribed',
+        }
+    else:
+        raise Exception(f'AAAaaa wrong method!!! {request.method}')
