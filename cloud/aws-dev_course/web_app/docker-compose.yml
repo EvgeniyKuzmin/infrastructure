@@ -3,10 +3,10 @@ services:
 
   web:
     build: .
-    image: amazonlinux:flask-app
-    container_name: flask-app
+    image: amazonlinux:imager-app
+    container_name: imager-app
     environment:
-    - FLASK_ENV=development
+      FLASK_ENV: "development"
     ports:
       - "80:5000"
     volumes:
@@ -26,16 +26,12 @@ services:
 
   db:
     image: postgres:14.1-alpine
-    container_name: flaskApp-pg
-    environment:
-    - PGDATA=/var/lib/postgresql/data/pgdata
-    - POSTGRES_DB=flaskApp
-    - POSTGRES_USER=evgenii
-    - POSTGRES_PASSWORD=StR0nGPWD
-    volumes:
-    - pg-data:/var/lib/postgresql/data
+    container_name: imager-pg
+    env_file: .env.db.development
     ports:
     - "5432:5432"
+    volumes:
+    - pg-data:/var/lib/postgresql/data
 
 volumes:
   pg-data:
