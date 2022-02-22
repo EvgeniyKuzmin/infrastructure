@@ -19,3 +19,9 @@
 6. Create a separate Lambda function which simply takes in an S3 object creation event and logs the S3 object name. Configure your S3 image bucket to send object creation events to that Lambda.
     * Tip: Since the Lambda handler code is extremely simple, you may code it directly in the AWS. Console using any of the available scripting language options.
 7. Upload an image to your S3 bucket and ensure you can see the Lambda reacts to this in CloudWatch logs.
+
+
+## Implementation notes
+Run the function:
+
+    aws lambda invoke --region=eu-west-1 --function-name=$(terraform output -raw function_name) response.json

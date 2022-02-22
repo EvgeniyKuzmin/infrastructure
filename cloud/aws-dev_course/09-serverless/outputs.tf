@@ -28,3 +28,10 @@ output "app_secret" {
   value     = random_password.app_secret.result
   sensitive = true
 }
+
+output "function_name" {
+  value = aws_lambda_function.batch_notifier.function_name
+}
+output "base_url" {
+  value = aws_apigatewayv2_stage.lambda.invoke_url
+}
