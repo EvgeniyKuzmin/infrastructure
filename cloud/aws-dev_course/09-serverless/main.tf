@@ -1,9 +1,10 @@
 terraform {
 
   required_providers {
-    aws    = ">= 4.2.0"
-    local  = ">= 2.1.0"
-    random = ">= 3.1.0"
+    archive = ">= 2.2.0"
+    aws     = ">= 4.2.0"
+    local   = ">= 2.1.0"
+    random  = ">= 3.1.0"
   }
   required_version = ">= 0.14.9"
 }
@@ -12,6 +13,9 @@ provider "aws" {
   profile = "default"
   region  = var.region
 }
+
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
 
 
 resource "random_password" "db_password" {
