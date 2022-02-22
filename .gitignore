@@ -15,3 +15,6 @@ __pycache__
 
 # custom
 cloud/aws-dev_course/web_app/uploads
+
+# artefacts
+*.zip
