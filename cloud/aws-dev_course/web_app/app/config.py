@@ -33,6 +33,7 @@ class BaseConfig:
     S3_STORAGE_PREFIX = os.environ['BUCKET_PREFIX']
     SQS_QUEUE_NAME = os.environ['SQS_NAME']
     SNS_TOPIC_NAME = os.environ['SNS_ARN']
+    API_DRAIN_URL = os.environ['DRAIN_URL']
 
     def __init__(self):
         os.makedirs(self.UPLOAD_FOLDER, exist_ok=True)

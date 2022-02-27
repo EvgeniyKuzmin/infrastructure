@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from urllib.request import urlopen
 
 from dotenv import load_dotenv
 from flask import (
@@ -198,3 +199,9 @@ def drain_queue():
         'images': images,
     }))
     return {'message': message}
+
+
+@app.route('/drain-queue-external')
+def drain_queue_external():
+    with urlopen(app.config['API_DRAIN_URL']) as resp:
+        return json.loads(resp.read().decode())

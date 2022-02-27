@@ -6,6 +6,7 @@ locals {
   })
   code_path = "${path.module}/code/uploads-batch-notifier"
   logs_path = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}"
+  drain_queue_path = "/drain-queue"
 }
 
 
@@ -167,15 +168,15 @@ resource "aws_apigatewayv2_stage" "lambda" {
 resource "aws_apigatewayv2_integration" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  integration_uri    = aws_lambda_function.batch_notifier.invoke_arn
-  integration_type   = "AWS_PROXY"
-  integration_method = "POST"
+  integration_uri        = aws_lambda_function.batch_notifier.invoke_arn
+  integration_type       = "AWS_PROXY"
+  payload_format_version = "2.0"
 }
 
-resource "aws_apigatewayv2_route" "hello_world" {
+resource "aws_apigatewayv2_route" "drain_queue" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /hello"
+  route_key = "$default"
   target    = "integrations/${aws_apigatewayv2_integration.lambda.id}"
 }
 

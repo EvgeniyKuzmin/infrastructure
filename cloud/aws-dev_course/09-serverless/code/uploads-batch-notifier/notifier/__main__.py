@@ -21,12 +21,15 @@ def handler(event, context) -> Dict[str, Any]:
     if queue is None:
         queue = Queue(name=os.environ['SQS_NAME'])
 
-    global notifier;
+    global notifier
     if notifier is None:
         notifier = Notifier(name=os.environ['SNS_ARN'])
 
     payload = drain_queue()
-    return payload
+    return {
+        'statusCode': 200,
+        'body': json.dumps(payload),
+    }
 
 
 def drain_queue() -> Dict[str, Any]:

@@ -22,6 +22,7 @@ resource "local_file" "credentials_env" {
         bucket_prefix = "${local.fs_public_prefix}/"
         sqs_name      = aws_sqs_queue.uploads_notification.name
         sns_arn       = aws_sns_topic.uploads_notification.id
+        drain_url     = aws_apigatewayv2_stage.lambda.invoke_url
       }
     )
   )
