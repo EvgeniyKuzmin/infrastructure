@@ -24,6 +24,10 @@ output "db_password" {
   sensitive = true
 }
 
+output "my_ip" {
+  value = local.my_ip
+}
+
 output "app_secret" {
   value     = random_password.app_secret.result
   sensitive = true

@@ -5,6 +5,7 @@ terraform {
     aws     = ">= 4.2.0"
     local   = ">= 2.1.0"
     random  = ">= 3.1.0"
+    http    = ">= 2.1.0"
   }
   required_version = ">= 0.14.9"
 }
@@ -16,6 +17,7 @@ provider "aws" {
 
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
+data "aws_availability_zones" "available" {}
 
 
 resource "random_password" "db_password" {
@@ -27,6 +29,10 @@ resource "random_password" "app_secret" {
   special = false
 }
 
+data "http" "my_ip" {
+  url = "http://ipv4.icanhazip.com"
+}
+
 
 locals {
   app_name = "imager"
@@ -35,6 +41,8 @@ locals {
   # NOW: a local docker host; TODO: switch to RDS
   db_host     = "db"
   db_username = var.db_username
+
+  my_ip = chomp(data.http.my_ip.body)
 
   tags = {
     "Project" = var.project_name
