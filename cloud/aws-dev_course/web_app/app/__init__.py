@@ -12,11 +12,10 @@ from flask import (
 from healthcheck import HealthCheck
 from werkzeug.utils import import_string, secure_filename
 
-env = os.getenv('FLASK_ENV', 'production')
-load_dotenv(Path(__file__).parents[1] / f'.env.{env}')
+load_dotenv(Path(__file__).parents[1] / '.env')
 app = Flask(__name__)
 app.config.from_object(
-    import_string(f'{__name__}.config.{env.title()}Config')(),
+    import_string(f'{__name__}.config.ProductionConfig')(),  # TODO: where usecases for dev?
 )
 
 

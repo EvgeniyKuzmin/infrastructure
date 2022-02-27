@@ -54,6 +54,17 @@ resource "aws_security_group" "metadata_db" {
       security_groups  = []
       self             = false
     },
+    {
+      description      = ""
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      from_port        = 5432
+      to_port          = 5432
+      prefix_list_ids  = []
+      security_groups  = [aws_security_group.server.id]
+      self             = false
+    }
   ]
 }
 

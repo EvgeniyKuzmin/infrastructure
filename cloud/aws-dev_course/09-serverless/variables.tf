@@ -12,3 +12,7 @@ variable "db_username" {
   type = string
   default = "evgenii"
 }
+
+variable "ssh_key" {
+  type = string
+}
