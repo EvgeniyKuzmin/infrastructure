@@ -4,7 +4,7 @@ locals {
   hdl_tags    = merge(local.tags, {
     "Purpose" = local.hdl_purpose
   })
-  code_path = "${path.module}/code/uploads-batch-notifier"
+  handler_path = "${local.code_path}/uploads-batch-notifier"
   logs_path = "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}"
   drain_queue_path = "/drain-queue"
 }
@@ -14,13 +14,13 @@ locals {
 
 data "archive_file" "code" {
   type        = "zip"
-  source_dir = local.code_path
-  output_path = "${local.code_path}.zip"
+  source_dir = local.handler_path
+  output_path = "${local.handler_path}.zip"
 }
 
 resource "aws_lambda_function" "batch_notifier" {
   description      = "Transferring SQS messages to SNS"
-  filename         = "${local.code_path}.zip"
+  filename         = "${local.handler_path}.zip"
   function_name    = local.hdl_name
   role             = aws_iam_role.lambda.arn
   handler          = "notifier.__main__.handler"

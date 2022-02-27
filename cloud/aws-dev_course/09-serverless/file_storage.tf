@@ -1,5 +1,6 @@
 locals {
   fs_purpose       = "${local.app_name}-storage"
+  fs_name          = "${var.project_name}-${local.fs_purpose}"
   fs_public_prefix = "public"
   fs_tags          = merge(local.tags, {
     "Purpose" = local.fs_purpose
@@ -7,7 +8,7 @@ locals {
 }
 
 resource "aws_s3_bucket" "images" {
-  bucket        = "${var.project_name}-${local.fs_purpose}"
+  bucket        = local.fs_name
   force_destroy = true
 
   tags = local.fs_tags

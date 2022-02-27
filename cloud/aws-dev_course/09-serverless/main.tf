@@ -35,8 +35,10 @@ data "http" "my_ip" {
 
 
 locals {
-  app_name = "imager"
-  app_path = "${path.module}/../web_app/"
+  app_name       = "imager"
+  app_path       = "${path.module}/../web_app/"
+  templates_path = "${path.module}/templates"
+  code_path      = "${path.module}/code"
 
   my_ip = chomp(data.http.my_ip.body)
 

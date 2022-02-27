@@ -11,7 +11,7 @@ locals {
 resource "local_file" "credentials_env" {
   filename = "${local.app_path}/${local.credential_file}"
   content = templatefile(
-    "${path.module}/templates/${local.credential_file}",
+    "${local.templates_path}/${local.credential_file}",
     merge(
       local.db_credentials,
       {
@@ -31,7 +31,7 @@ resource "local_file" "credentials_env" {
 resource "local_file" "credentials_db_env" {
   filename = "${local.app_path}/${local.credentials_db_file}"
   content = templatefile(
-    "${path.module}/templates/${local.credentials_db_file}",
+    "${local.templates_path}/${local.credentials_db_file}",
     local.db_credentials,
   )
 }
