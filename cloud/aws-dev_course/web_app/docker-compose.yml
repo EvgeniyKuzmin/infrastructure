@@ -21,17 +21,17 @@ services:
       bash -c "
       flask db upgrade && flask run --host=0.0.0.0 --port=5000
       "
-    depends_on:
-      - db
+  #   depends_on:
+  #     - db
 
-  db:
-    image: postgres:14.1-alpine
-    container_name: imager-pg
-    env_file: .env.db.development
-    ports:
-    - "5432:5432"
-    volumes:
-    - pg-data:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:14.1-alpine
+  #   container_name: imager-pg
+  #   env_file: .env.db.development
+  #   ports:
+  #   - "5432:5432"
+  #   volumes:
+  #   - pg-data:/var/lib/postgresql/data
 
 volumes:
   pg-data:

@@ -11,13 +11,16 @@ output "s3_url" {
 }
 
 output "db_host" {
-  value = local.db_host
+  value = aws_db_instance.metadata.address
+}
+output "db_port" {
+  value = aws_db_instance.metadata.port
 }
 output "db_name" {
-  value = local.app_name
+  value = aws_db_instance.metadata.name
 }
 output "db_user" {
-  value = local.db_username
+  value = aws_db_instance.metadata.username
 }
 output "db_password" {
   value     = random_password.db_password.result

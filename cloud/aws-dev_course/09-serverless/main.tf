@@ -38,10 +38,6 @@ locals {
   app_name = "imager"
   app_path = "${path.module}/../web_app/"
 
-  # NOW: a local docker host; TODO: switch to RDS
-  db_host     = "db"
-  db_username = var.db_username
-
   my_ip = chomp(data.http.my_ip.body)
 
   tags = {

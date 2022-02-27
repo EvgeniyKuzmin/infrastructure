@@ -2,8 +2,8 @@ locals {
   credential_file     = ".env.development"
   credentials_db_file = ".env.db.development"
   db_credentials = {
-    db_name     = local.app_name
-    db_user     = local.db_username
+    db_name     = aws_db_instance.metadata.name
+    db_user     = aws_db_instance.metadata.username
     db_password = random_password.db_password.result
   }
 }
@@ -15,7 +15,7 @@ resource "local_file" "credentials_env" {
     merge(
       local.db_credentials,
       {
-        db_host       = local.db_host
+        db_host       = aws_db_instance.metadata.address  # or "db" for local docker
         flask_secret  = random_password.app_secret.result
         aws_region    = var.region
         bucket_name   = aws_s3_bucket.images.id
