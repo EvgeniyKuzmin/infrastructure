@@ -188,16 +188,19 @@ def drain_queue():
         overall_size += event['size']
         images.append(event['url'])
 
-    message = (
-        f'Sending summary of {len(images)} events, '
-        f'with overall size {overall_size}',
-    )
-    logging.info(message)
-    notifier.publish_message(json.dumps({
-        'overall_size': overall_size,
-        'images': images,
-    }))
-    return {'message': message}
+    payload = {'images': images, 'overall_size': overall_size}
+    if overall_size:
+        payload['message'] = (
+            f'Sending summary of {len(images)} events, '
+            f'with overall size {overall_size}'
+        )
+        notifier.publish_message(json.dumps(payload, indent=4))
+
+    else:
+        payload['message'] = 'There are no uploaded images'
+
+    logging.info(payload['message'])
+    return payload
 
 
 @app.route('/drain-queue-external')
