@@ -172,6 +172,18 @@ echo "--->>> AWS installed: \"$(aws --version)\""
 
 ###############################################################################
 
+echo "--->>> Install Terraform"
+sudo apt install -y \
+	gnupg \
+	software-properties-common \
+	curl
+curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt install terraform
+echo "--->>> Terraform installed: \"$(terraform --version)\""
+
+###############################################################################
+
 echo "--->>> Install AWS-Vault"
 sudo curl -L -o /usr/local/bin/aws-vault https://github.com/99designs/aws-vault/releases/download/v6.2.0/aws-vault-linux-amd64
 sudo chmod 755 /usr/local/bin/aws-vault
